@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>日本の看板・表示マスター｜5人限定学習ルーム</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      width: 100%;
+      min-height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: 'BIZ UDPGothic', 'Inter', sans-serif;
+      font-size: 17px;
+      background-color: #f3f6f9;
+      color: #1e293b;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* スマホ・iFrame環境でも画面いっぱいに広げる集中フルスクリーンモード */
+    body.focus-fullscreen header {
+      display: none;
+    }
+    body.focus-fullscreen main {
+      max-width: 100%;
+      padding: 0.6rem;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    body.focus-fullscreen .tab-view {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    /* フラッシュカード 3D フリップ */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    /* 日本の看板・標識風の縁取り */
+    .signboard-frame {
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+    }
+
+    /* カスタムスクロールバー */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- トップヘッダー -->
+  <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md pt-[env(safe-area-inset-top)]">
+    <div class="w-full max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-base sm:text-lg shadow-inner shrink-0">
+          看板
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-base sm:text-xl font-bold tracking-wide leading-tight truncate">日本の看板・表示マスター</h1>
+          <p class="text-xs sm:text-sm text-slate-300 truncate">全77語（日本語・Português）｜5人限定</p>
+        </div>
+      </div>
+
+      <!-- 全画面ボタン＆5人共有ステータス -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="btn-fullscreen" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition shadow-sm" title="画面いっぱいに表示">
+          ⛶ 全画面
+        </button>
+        <button id="btn-open-room-modal" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-2 rounded-xl text-xs sm:text-sm transition">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" id="sync-indicator"></span>
+          <span id="header-user-badge" class="font-bold text-emerald-300 max-w-[5.5rem] truncate">枠を選択</span>
+          <span class="text-slate-400">|</span>
+          <span id="header-member-count" class="text-slate-200 font-semibold">0/5人</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ナビゲーションタブ（4つの学習モード + 5人枠・成績） -->
+    <nav class="bg-slate-800 border-t border-slate-700 overflow-x-auto">
+      <div class="w-full max-w-6xl mx-auto px-1 flex items-center justify-between sm:justify-start gap-0.5">
+        <button data-tab="list" class="nav-tab active-tab flex-1 sm:flex-none px-3 sm:px-5 py-3 text-sm sm:text-base font-bold border-b-2 border-emerald-400 text-emerald-300 whitespace-nowrap transition">
+          📖 一覧
+        </button>
+        <button data-tab="flashcard" class="nav-tab flex-1 sm:flex-none px-3 sm:px-5 py-3 text-sm sm:text-base font-bold border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap transition">
+          🗂️ カード
+        </button>
+        <button data-tab="quiz" class="nav-tab flex-1 sm:flex-none px-3 sm:px-5 py-3 text-sm sm:text-base font-bold border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap transition">
+          ❓ クイズ
+        </button>
+        <button data-tab="scene" class="nav-tab flex-1 sm:flex-none px-3 sm:px-5 py-3 text-sm sm:text-base font-bold border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap transition">
+          🏙️ 場面判定
+        </button>
+        <button data-tab="members" class="nav-tab flex-1 sm:flex-none px-3 sm:px-5 py-3 text-sm sm:text-base font-bold border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap transition">
+          👥 5人枠・成績
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- 集中全画面モード解除用フローティングボタン -->
+  <button id="btn-exit-focus-fullscreen" class="hidden fixed top-3 right-3 z-50 bg-slate-900/90 hover:bg-slate-800 text-white border border-slate-600 px-3.5 py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg backdrop-blur">
+    ✕ 全画面を終了
+  </button>
+
+  <!-- トースト通知エリア（alert()不使用） -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- メインコンテンツ領域 -->
+  <main class="flex-1 w-full max-w-6xl mx-auto px-2.5 sm:px-4 py-3 sm:py-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
+
+    <!-- ==================== 1. 一覧＆検索モード ==================== -->
+    <section id="view-list" class="tab-view space-y-5">
+      <!-- フィルター＆コントロールバー -->
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+        <div class="flex flex-col md:flex-row gap-3 justify-between">
+          <!-- キーワード検索 -->
+          <div class="relative flex-1">
+            <input type="text" id="search-input" placeholder="漢字・ひらがな・ポルトガル語で検索（例：禁煙, fumar, estação...）"
+              class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <svg class="w-5 h-5 text-slate-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+
+          <!-- ふりがな切り替え & 習得フィルター -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="toggle-furigana" class="px-4 py-2.5 rounded-xl text-sm sm:text-base font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition flex items-center gap-1.5">
+              <span>ふりがな：ON</span>
+            </button>
+            <select id="filter-status" class="px-3.5 py-2.5 rounded-xl text-sm sm:text-base font-semibold bg-slate-50 border border-slate-300 text-slate-700 focus:outline-none">
+              <option value="all">すべて表示 (77語)</option>
+              <option value="unmastered">まだ不安・未習得のみ</option>
+              <option value="mastered">覚えた！のみ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- カテゴリータブ -->
+        <div id="category-pills" class="flex items-center gap-2 overflow-x-auto pb-1">
+          <!-- JSで動的生成 -->
+        </div>
+      </div>
+
+      <!-- 語彙カード一覧グリッド -->
+      <div id="vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- JSで動的生成 -->
+      </div>
+    </section>
+
+    <!-- ==================== 2. フラッシュカードモード ==================== -->
+    <section id="view-flashcard" class="tab-view hidden max-w-2xl mx-auto space-y-5">
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <label class="text-sm font-bold text-slate-500">出題範囲:</label>
+          <select id="fc-category" class="px-3.5 py-2 rounded-xl text-sm sm:text-base font-bold bg-slate-50 border border-slate-300">
+            <option value="all">全カテゴリー (77語)</option>
+            <option value="unmastered">未習得のみ</option>
+          </select>
+        </div>
+        <div class="text-base font-bold text-slate-700">
+          カード <span id="fc-progress" class="text-emerald-600">1 / 77</span>
+        </div>
+      </div>
+
+      <!-- 3Dフリップカード -->
+      <div class="perspective-1000 w-full h-80 sm:h-96 cursor-pointer select-none" id="fc-card-wrapper">
+        <div id="fc-card-inner" class="relative w-full h-full transform-style-3d">
+          <!-- 表面（漢字のみ＋サイン風デザイン） -->
+          <div class="absolute inset-0 backface-hidden bg-white rounded-3xl signboard-frame border-4 border-slate-800 p-6 flex flex-col justify-between items-center text-center">
+            <div class="w-full flex justify-between items-center text-sm font-bold text-slate-400">
+              <span id="fc-front-cat" class="px-3 py-1 bg-slate-100 rounded-lg text-slate-600">カテゴリー</span>
+              <span id="fc-front-badge" class="px-3 py-1 rounded-lg bg-amber-100 text-amber-700">未習得</span>
+            </div>
+
+            <div class="my-auto px-2">
+              <p class="text-sm text-slate-400 mb-2">タップして読み・意味を確認</p>
+              <h2 id="fc-front-word" class="text-4xl sm:text-5xl font-bold text-slate-900 tracking-wider leading-snug">
+                禁煙
+              </h2>
+            </div>
+
+            <div class="w-full flex justify-center">
+              <button type="button" id="fc-speak-front" class="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold flex items-center gap-1.5 transition">
+                🔊 音声を聞く
+              </button>
+            </div>
+          </div>
+
+          <!-- 裏面（読み・ポルトガル語訳・場面アイコン・解説） -->
+          <div class="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900 text-white rounded-3xl signboard-frame border-4 border-emerald-500 p-6 flex flex-col justify-between items-center text-center">
+            <div class="w-full flex justify-between items-center">
+              <span id="fc-back-cat" class="text-sm px-3 py-1 bg-slate-800 rounded-lg text-emerald-300 font-bold">カテゴリー</span>
+              <button type="button" id="fc-speak-back" class="px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold flex items-center gap-1 transition">
+                🔊 発音
+              </button>
+            </div>
+
+            <div class="my-auto space-y-3 max-w-md">
+              <div id="fc-back-icon" class="w-16 h-16 mx-auto rounded-2xl bg-white/10 flex items-center justify-center">
+                <!-- SVG Icon -->
+              </div>
+              <div>
+                <p id="fc-back-reading" class="text-lg sm:text-2xl text-emerald-300 font-bold mb-1">きんえん</p>
+                <h3 id="fc-back-word" class="text-3xl sm:text-4xl font-bold text-white mb-2">禁煙</h3>
+                <p id="fc-back-pt" class="text-lg sm:text-xl font-semibold text-amber-300">Proibido fumar</p>
+              </div>
+              <p id="fc-back-note" class="text-sm sm:text-base text-slate-300 bg-slate-800/80 px-3.5 py-2.5 rounded-xl">
+                シチュエーション解説
+              </p>
+            </div>
+
+            <p class="text-sm text-slate-400">タップで表に戻す</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- アクションボタン -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <button id="fc-prev" class="py-3.5 px-4 rounded-2xl bg-white border border-slate-300 hover:bg-slate-50 font-bold text-base text-slate-700 transition">
+          ← 前へ
+        </button>
+        <button id="fc-mark-unsure" class="py-3.5 px-4 rounded-2xl bg-amber-100 hover:bg-amber-200 border border-amber-300 font-bold text-base text-amber-800 transition">
+          🤔 まだ不安
+        </button>
+        <button id="fc-mark-mastered" class="py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold text-base text-white shadow-sm transition">
+          ✅ 覚えた！
+        </button>
+        <button id="fc-next" class="py-3.5 px-4 rounded-2xl bg-white border border-slate-300 hover:bg-slate-50 font-bold text-base text-slate-700 transition">
+          次へ →
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== 3. 4択クイズモード ==================== -->
+    <section id="view-quiz" class="tab-view hidden max-w-2xl mx-auto space-y-5">
+      <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">QUIZ DE 4 ALTERNATIVAS</span>
+            <h2 class="text-xl font-bold text-slate-800">看板の読み・ポルトガル語訳 4択クイズ</h2>
+          </div>
+          <div class="flex items-center gap-2.5 text-sm sm:text-base font-bold">
+            <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700">連続正解: <span id="quiz-streak" class="text-emerald-600">0</span></span>
+            <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700">正答率: <span id="quiz-accuracy" class="text-blue-600">-</span></span>
+          </div>
+        </div>
+
+        <!-- 出題モード切替 -->
+        <div class="flex gap-2">
+          <button data-qmode="kanji-to-meaning" class="qmode-btn flex-1 py-2.5 px-3 rounded-xl text-sm sm:text-base font-bold bg-slate-900 text-white transition">
+            看板 → 読み＆ポルトガル語訳
+          </button>
+          <button data-qmode="meaning-to-kanji" class="qmode-btn flex-1 py-2.5 px-3 rounded-xl text-sm sm:text-base font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+            ポルトガル語訳 → 正しい看板を選ぶ
+          </button>
+        </div>
+
+        <!-- 問題表示エリア -->
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 text-center space-y-2.5">
+          <p id="quiz-prompt-label" class="text-sm font-bold text-slate-500">この看板の正しい読みとポルトガル語訳はどれですか？</p>
+          <div id="quiz-question-text" class="text-3xl sm:text-4xl font-bold text-slate-900 py-2">
+            関係者以外立ち入り禁止
+          </div>
+          <button id="quiz-speak-btn" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white border border-slate-300 text-sm font-bold text-slate-600 hover:bg-slate-100">
+            🔊 音声ヒント
+          </button>
+        </div>
+
+        <!-- 4択ボタン -->
+        <div id="quiz-options" class="grid grid-cols-1 gap-3">
+          <!-- JSで動的生成 -->
+        </div>
+
+        <!-- 解説＆次へボタン -->
+        <div id="quiz-feedback" class="hidden p-4 rounded-2xl bg-slate-100 border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <p id="quiz-feedback-title" class="font-bold text-lg"></p>
+            <button id="quiz-next-btn" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-base font-bold transition shrink-0">
+              次の問題へ →
+            </button>
+          </div>
+          <p id="quiz-feedback-detail" class="text-sm sm:text-base text-slate-700 leading-relaxed"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. シチュエーション判定モード ==================== -->
+    <section id="view-scene" class="tab-view hidden max-w-3xl mx-auto space-y-5">
+      <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-sm border border-slate-200 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">DESAFIO DE SITUAÇÃO</span>
+            <h2 class="text-xl font-bold text-slate-800">街・駅・病院のシチュエーション判定</h2>
+          </div>
+          <span class="text-sm sm:text-base font-bold px-3.5 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
+            スコア: <span id="scene-score">0</span> 点
+          </span>
+        </div>
+
+        <!-- シーンイラスト風カード（問題文は日本語のみ表示し、ポルトガル語訳は回答後に表示） -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-2xl p-5 sm:p-6 space-y-4">
+          <div class="flex items-center gap-3.5">
+            <div id="scene-icon-box" class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+              <!-- SVG -->
+            </div>
+            <div>
+              <span id="scene-location-badge" class="text-xs sm:text-sm font-bold px-3 py-1 rounded bg-emerald-500 text-white">場所：駅・ホーム</span>
+              <h3 id="scene-situation-title" class="text-lg sm:text-xl font-bold mt-1.5">状況説明</h3>
+            </div>
+          </div>
+          <p id="scene-situation-desc" class="text-base sm:text-lg text-white leading-relaxed bg-white/10 p-4 sm:p-5 rounded-xl border border-white/15 font-medium">
+            あなたは今、電車のホームにいます。線路に物を落としてしまいましたが、自分で降りて拾ってはいけません。そこに立てられている看板はどれですか？
+          </p>
+        </div>
+
+        <!-- 選択肢（実際の看板プレート風） -->
+        <div id="scene-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <!-- JSで動的生成 -->
+        </div>
+
+        <!-- 回答後の解説エリア（ここにポルトガル語訳＋日本語解説を格納） -->
+        <div id="scene-feedback" class="hidden p-4 sm:p-5 rounded-2xl bg-slate-100 border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <p id="scene-feedback-title" class="font-bold text-lg"></p>
+            <button id="scene-next-btn" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm sm:text-base font-bold hover:bg-slate-800 transition shrink-0">
+              次の場面へ →
+            </button>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
+            <span class="text-xs font-bold text-emerald-700 block mb-1">🇧🇷 Tradução da situação (場面のポルトガル語訳)</span>
+            <p id="scene-feedback-pt" class="text-sm sm:text-base text-emerald-950 font-semibold leading-relaxed"></p>
+          </div>
+          <p id="scene-feedback-desc" class="text-sm sm:text-base text-slate-700 leading-relaxed"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. 5人限定共有＆プライバシー保護ボード ==================== -->
+    <section id="view-members" class="tab-view hidden max-w-4xl mx-auto space-y-5">
+      <!-- ルーム情報＆招待カード -->
+      <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-lg sm:text-xl font-bold text-slate-800">5人限定 クローズド学習ルーム</h2>
+              <span id="room-capacity-badge" class="px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-800">
+                参加枠: 0 / 5人
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-slate-800 text-white">
+                🔒 成績非公開モード
+              </span>
+            </div>
+            <p class="text-sm text-slate-500 mt-1.5">
+              最大5人までメンバー登録が可能です。<strong>お互いの学習成績や習得数は表示されず、ご自身の画面でのみ確認できます。</strong>
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btn-copy-invite" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold flex items-center gap-2 transition">
+              <span>📋 招待合言葉＆URLをコピー</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 招待コード（合言葉）設定バー -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-2 text-sm sm:text-base">
+            <span class="font-bold text-slate-600">現在の合言葉:</span>
+            <code id="display-passcode" class="px-3 py-1 rounded-lg bg-white border border-slate-300 font-bold text-emerald-700 tracking-wider">KANBAN-WEEK1</code>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="input-passcode" placeholder="別の合言葉ルームへ移動" maxlength="20"
+              class="px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <button id="btn-switch-room" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition">
+              ルーム切替
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- あなた専用の成績カード（他のメンバーには非公開） -->
+      <div id="my-private-progress-card" class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 sm:p-6 shadow-md border border-slate-700 space-y-4">
+        <!-- JSで自分の成績のみ描画 -->
+      </div>
+
+      <!-- プライバシー保護の明示バナー -->
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-center gap-2.5 text-sm font-bold text-amber-900">
+        <span>🔒</span>
+        <span>※他のメンバーの成績は表示されません（プライバシー保護設定により、参加状況のみ表示しています）</span>
+      </div>
+
+      <!-- 5人スロット一覧（名前と参加ステータスのみ表示） -->
+      <div id="member-slots-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- スロット1〜5をJSで動的生成 -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- メンバー選択・新規登録モーダル（5人定員ロック機能付き） -->
+  <div id="room-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">学習メンバー選択（定員5名）</h3>
+          <p class="text-xs sm:text-sm text-slate-500">あなたのスロットを選択するか、空き枠に名前を登録してください</p>
+        </div>
+        <button id="btn-close-room-modal" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 font-bold">
+          ✕
+        </button>
+      </div>
+
+      <div id="modal-slots-list" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+        <!-- JSで5枠表示 -->
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-xs sm:text-sm text-amber-800 leading-relaxed">
+        ※ このアプリは非商用・最大5人までの共有学習用です。5枠すべてが埋まっている場合、新しいメンバーは追加できません（既存メンバーの枠を選択して学習を続けることは可能です）。
+      </div>
+    </div>
+  </div>
+
+  <!-- アプリケーションロジック（Firebase Firestore 連携 + 全77語彙データ + 4学習モード） -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // =========================================================================
+    // 1. 全77語彙データ（PDF全7ページ・6カテゴリー完全収録・ブラジルポルトガル語訳）
+    // =========================================================================
+    const VOCAB_DATA = [
+      // --- カテゴリー1: 禁止・注意・危険 (10語) ---
+      { id: 1, cat: "禁止・注意・危険", word: "禁煙", reading: "きんえん", pt: "Proibido fumar", icon: "no_smoking", note: "建物内や駅構内など、タバコを吸ってはいけない場所の表示です。" },
+      { id: 2, cat: "禁止・注意・危険", word: "お静かに!", reading: "おしずかに!", pt: "Silêncio, por favor!", icon: "quiet", note: "病院の待合室や図書館など、静かにしなければならない場所の掲示です。" },
+      { id: 3, cat: "禁止・注意・危険", word: "危険!", reading: "きけん!", pt: "Perigo!", icon: "danger", note: "壁のひび割れや高圧電気など、近づくと危ない場所の警告です。" },
+      { id: 4, cat: "禁止・注意・危険", word: "危ない!", reading: "あぶない!", pt: "Cuidado! / Perigoso!", icon: "warning", note: "頭上や足元など、すぐに危険が及ぶ場所での注意喚起です。" },
+      { id: 5, cat: "禁止・注意・危険", word: "関係者以外立ち入り禁止", reading: "かんけいしゃいがいたちいりきんし", pt: "Entrada proibida a pessoas não autorizadas", icon: "no_entry", note: "スタッフや工事関係者以外は入ってはいけない場所を示します。" },
+      { id: 6, cat: "禁止・注意・危険", word: "落石注意", reading: "らくせきちゅうい", pt: "Cuidado com queda de pedras", icon: "falling_rocks", note: "山道や崖の近くで、上から石が落ちてくる危険がある道路標識です。" },
+      { id: 7, cat: "禁止・注意・危険", word: "飛び出し注意", reading: "とびだしちゅうい", pt: "Cuidado com crianças/pedestres atravessando", icon: "dash_out", note: "住宅街や学校の近くで、歩行者や子どもが急に道路に出る危険を知らせます。" },
+      { id: 8, cat: "禁止・注意・危険", word: "駐車禁止", reading: "ちゅうしゃきんし", pt: "Proibido estacionar", icon: "no_parking", note: "道路沿いなどで車を停めてはいけない場所の看板です。" },
+      { id: 9, cat: "禁止・注意・危険", word: "ゴミを捨てるな", reading: "ごみをすてるな", pt: "Não jogue lixo", icon: "no_litter", note: "川辺や公園などでゴミのポイ捨てを強く禁止する立て札です。" },
+      { id: 10, cat: "禁止・注意・危険", word: "遊泳禁止", reading: "ゆうえいきんし", pt: "Proibido nadar", icon: "no_swimming", note: "流れが速い川や危険な海で、泳いではいけないことを示します。" },
+
+      // --- カテゴリー2: 施設・案内図・建物内 (12語) ---
+      { id: 11, cat: "施設・案内図・建物内", word: "喫煙所", reading: "きつえんじょ", pt: "Área para fumantes", icon: "smoking_area", note: "タバコを吸うことが許可されている専用の場所です。" },
+      { id: 12, cat: "施設・案内図・建物内", word: "非常口", reading: "ひじょうぐち", pt: "Saída de emergência", icon: "exit", note: "火事や地震などの緊急時に避難するための出口です。" },
+      { id: 13, cat: "施設・案内図・建物内", word: "喫茶", reading: "きっさ", pt: "Cafeteria / Café", icon: "cafe", note: "コーヒーや軽食を楽しめるお店（喫茶店）の表示です。" },
+      { id: 14, cat: "施設・案内図・建物内", word: "御手洗い", reading: "おてあらい", pt: "Banheiro / Toalete", icon: "toilet", note: "トイレの丁寧な言い方です。公共施設やデパートでよく使われます。" },
+      { id: 15, cat: "施設・案内図・建物内", word: "受付", reading: "うけつけ", pt: "Recepção", icon: "reception", note: "建物の入り口やカウンターで、来訪者の対応をする場所です。" },
+      { id: 16, cat: "施設・案内図・建物内", word: "案内図", reading: "あんないず", pt: "Mapa guia / Planta do local", icon: "map", note: "建物内の部屋やトイレ、階段の場所を示したフロアマップです。" },
+      { id: 17, cat: "施設・案内図・建物内", word: "会議室", reading: "かいぎしつ", pt: "Sala de reuniões", icon: "meeting", note: "打ち合わせやミーティングを行う部屋です。" },
+      { id: 18, cat: "施設・案内図・建物内", word: "案内所", reading: "あんないじょ", pt: "Balcão de informações", icon: "info", note: "道順や施設の利用方法などを質問できるインフォメーションです。" },
+      { id: 19, cat: "施設・案内図・建物内", word: "化粧室", reading: "けしょうしつ", pt: "Toalete / Lavabo", icon: "toilet", note: "御手洗い・トイレと同じ意味の丁寧な表現です。" },
+      { id: 20, cat: "施設・案内図・建物内", word: "階段", reading: "かいだん", pt: "Escada", icon: "stairs", note: "上の階や下の階へ歩いて移動するための通路です。" },
+      { id: 21, cat: "施設・案内図・建物内", word: "1階", reading: "いっかい", pt: "1º andar (Térreo)", icon: "floor", note: "建物の地上階のフロアを表します。" },
+      { id: 22, cat: "施設・案内図・建物内", word: "E.V", reading: "エレベーター", pt: "Elevador", icon: "elevator", note: "案内図などで「エレベーター」を省略して書くときの記号です。" },
+
+      // --- カテゴリー3: お店・ドア・トイレ・EV (12語) ---
+      { id: 23, cat: "お店・ドア・トイレ・EV", word: "営業中", reading: "えいぎょうちゅう", pt: "Aberto (Em funcionamento)", icon: "open", note: "お店が開いていて利用できる状態を示す札です。" },
+      { id: 24, cat: "お店・ドア・トイレ・EV", word: "引", reading: "ひく", pt: "Puxe", icon: "door", note: "ドアを手前に引いて開けることを示す表示です。" },
+      { id: 25, cat: "お店・ドア・トイレ・EV", word: "開放厳禁", reading: "かいほうげんきん", pt: "Mantenha a porta fechada (Proibido deixar aberto)", icon: "door", note: "ドアを開けたままにしてはいけない（必ず閉める）という強い注意です。" },
+      { id: 26, cat: "お店・ドア・トイレ・EV", word: "押", reading: "おす", pt: "Empurre", icon: "door", note: "ドアを向こう側に押して開けることを示す表示です。" },
+      { id: 27, cat: "お店・ドア・トイレ・EV", word: "準備中", reading: "じゅんびちゅう", pt: "Preparando / Fechado temporariamente", icon: "closed", note: "開店前や休憩時間で、まだ営業していないことを示します。" },
+      { id: 28, cat: "お店・ドア・トイレ・EV", word: "定休日", reading: "ていきゅうび", pt: "Folga semanal / Fechado hoje", icon: "closed", note: "毎週決められたお店の休みの日を表します。" },
+      { id: 29, cat: "お店・ドア・トイレ・EV", word: "トイレ", reading: "といれ", pt: "Banheiro", icon: "toilet", note: "最も一般的なトイレの表示です。" },
+      { id: 30, cat: "お店・ドア・トイレ・EV", word: "清掃中", reading: "せいそうちゅう", pt: "Em limpeza", icon: "cleaning", note: "スタッフがお掃除をしている最中であることを知らせる看板です。" },
+      { id: 31, cat: "お店・ドア・トイレ・EV", word: "備え付けの紙以外流さないで下さい", reading: "そなえつけのかみいがいながさないでください", pt: "Não jogue nada além do papel higiênico fornecido", icon: "toilet", note: "日本のトイレに必ずある注意書き。ティッシュやゴミを流すと詰まります。" },
+      { id: 32, cat: "お店・ドア・トイレ・EV", word: "点検中", reading: "てんけんちゅう", pt: "Em manutenção / inspeção", icon: "maintenance", note: "エレベーターや設備の安全チェックをしていて使えない状態です。" },
+      { id: 33, cat: "お店・ドア・トイレ・EV", word: "開", reading: "ひらく", pt: "Abrir (Botão do elevador)", icon: "elevator", note: "エレベーターのドアを開けるボタンの文字です。" },
+      { id: 34, cat: "お店・ドア・トイレ・EV", word: "閉", reading: "しまる", pt: "Fechar (Botão do elevador)", icon: "elevator", note: "エレベーターのドアを閉めるボタンの文字です。" },
+
+      // --- カテゴリー4: 駅・電車 (11語) ---
+      { id: 35, cat: "駅・電車", word: "地下鉄", reading: "ちかてつ", pt: "Metrô", icon: "train", note: "地下を走る電車の案内表示です。" },
+      { id: 36, cat: "駅・電車", word: "切符売り場", reading: "きっぷうりば", pt: "Bilheteria / Venda de passagens", icon: "ticket", note: "自動券売機や窓口で電車のチケットを買う場所です。" },
+      { id: 37, cat: "駅・電車", word: "窓口", reading: "まどぐち", pt: "Guichê de atendimento", icon: "reception", note: "駅員さんと直接話して切符や定期券を買うカウンターです。" },
+      { id: 38, cat: "駅・電車", word: "精算所", reading: "せいさんじょ", pt: "Ajuste de tarifa", icon: "ticket", note: "乗り越しや料金不足のときに追加料金を支払う場所です。" },
+      { id: 39, cat: "駅・電車", word: "改札口", reading: "かいさつぐち", pt: "Catraca / Bloqueio", icon: "gate", note: "切符やICカードをタッチしてホームへ入るゲートです。" },
+      { id: 40, cat: "駅・電車", word: "新幹線乗り場", reading: "しんかんせんのりば", pt: "Plataforma do Shinkansen (Trem-bala)", icon: "train", note: "高速鉄道（新幹線）に乗るための専用入り口・ホームです。" },
+      { id: 41, cat: "駅・電車", word: "1番線・2番線", reading: "いちばんせん・にばんせん", pt: "Plataforma 1 / Plataforma 2", icon: "train", note: "電車が到着するホームの番号を表します。" },
+      { id: 42, cat: "駅・電車", word: "発車時刻", reading: "はっしゃじこく", pt: "Horário de partida", icon: "clock", note: "電車が駅を出発する時間です。" },
+      { id: 43, cat: "駅・電車", word: "1号車", reading: "いちごうしゃ", pt: "Vagão 1", icon: "train", note: "電車の車両番号（何両目か）を表す表示です。" },
+      { id: 44, cat: "駅・電車", word: "快速", reading: "かいそく", pt: "Trem rápido (Expresso)", icon: "train", note: "小さな駅を通過して早く目的地に着く電車の種別です。" },
+      { id: 45, cat: "駅・電車", word: "線路内立ち入り禁止", reading: "せんろないたちいりきんし", pt: "Proibido entrar nos trilhos", icon: "no_entry", note: "非常に危険なため、ホームから線路に降りることを厳しく禁じる表示です。" },
+
+      // --- カテゴリー5: バス・車内表示 (11語) ---
+      { id: 46, cat: "バス・車内表示", word: "〇〇経由△△行", reading: "〇〇けいゆ△△ゆき", pt: "Destino △△ via 〇〇", icon: "bus", note: "バスがどのルート（経由地）を通ってどこへ行くかを示す行先表示です。" },
+      { id: 47, cat: "バス・車内表示", word: "バスのりば", reading: "ばすのりば", pt: "Ponto de ônibus", icon: "bus", note: "バスを待って乗車する場所の案内です。" },
+      { id: 48, cat: "バス・車内表示", word: "深夜バス", reading: "しんやばす", pt: "Ônibus noturno (Madrugada)", icon: "bus", note: "夜遅い時間帯に運行されるバスです（通常より運賃が高くなります）。" },
+      { id: 49, cat: "バス・車内表示", word: "空港行き", reading: "くうこういき", pt: "Com destino ao aeroporto", icon: "airport", note: "空港へ向かうリムジンバスや路線バスの表示です。" },
+      { id: 50, cat: "バス・車内表示", word: "割増", reading: "わりまし", pt: "Tarifa adicional / Acréscimo", icon: "money", note: "深夜時間帯などに通常料金より高い運賃がかかることを示します。" },
+      { id: 51, cat: "バス・車内表示", word: "降車口", reading: "こうしゃぐち", pt: "Porta de saída (Desembarque)", icon: "bus", note: "バスから降りるときに使うドアです。" },
+      { id: 52, cat: "バス・車内表示", word: "乗車口", reading: "じょうしゃぐち", pt: "Porta de entrada (Embarque)", icon: "bus", note: "バスに乗るときに使うドアです。" },
+      { id: 53, cat: "バス・車内表示", word: "通路側", reading: "つうろがわ", pt: "Assento do corredor", icon: "seat", note: "電車・バス・飛行機で通路に近い方の座席です。" },
+      { id: 54, cat: "バス・車内表示", word: "窓側", reading: "まどがわ", pt: "Assento da janela", icon: "seat", note: "景色が見える窓の近くの座席です。" },
+      { id: 55, cat: "バス・車内表示", word: "両替", reading: "りょうがえ", pt: "Troco / Câmbio de notas", icon: "money", note: "お札を小銭に換えること。バス車内の運賃箱についています。" },
+      { id: 56, cat: "バス・車内表示", word: "優先席（席をおゆずりください）", reading: "ゆうせんせき（せきをおゆずりください）", pt: "Assento preferencial (Ceda o lugar a idosos/deficientes)", icon: "priority_seat", note: "お年寄りや体の不自由な方、妊婦さんに譲るための座席です。" },
+
+      // --- カテゴリー6: 病院・郵便局・空港・看板 (21語) ---
+      { id: 57, cat: "病院・郵便局・空港・看板", word: "初診受付", reading: "しょしんうけつけ", pt: "Recepção para primeira consulta", icon: "hospital", note: "その病院を初めて受診する人が手続きをする窓口です。" },
+      { id: 58, cat: "病院・郵便局・空港・看板", word: "再診受付", reading: "さいしんうけつけ", pt: "Recepção para retorno", icon: "hospital", note: "2回目以降の診察を受ける人が受付をする窓口です。" },
+      { id: 59, cat: "病院・郵便局・空港・看板", word: "病院", reading: "びょういん", pt: "Hospital", icon: "hospital", note: "病気やケガを治療する医療機関です。" },
+      { id: 60, cat: "病院・郵便局・空港・看板", word: "診療科目", reading: "しんりょうかもく", pt: "Especialidades médicas", icon: "hospital", note: "その病院で診てもらえる専門分野の一覧です。" },
+      { id: 61, cat: "病院・郵便局・空港・看板", word: "産婦人科", reading: "さんふじんか", pt: "Ginecologia e Obstetrícia", icon: "hospital", note: "妊娠・出産や女性特有の病気を診る科です。" },
+      { id: 62, cat: "病院・郵便局・空港・看板", word: "内科", reading: "ないか", pt: "Clínica médica (Clínico geral)", icon: "hospital", note: "風邪や腹痛など、体の内側の病気を診る科です。" },
+      { id: 63, cat: "病院・郵便局・空港・看板", word: "皮膚科", reading: "ひふか", pt: "Dermatologia", icon: "hospital", note: "肌荒れや湿疹、やけどなど皮膚の病気を診る科です。" },
+      { id: 64, cat: "病院・郵便局・空港・看板", word: "外科", reading: "げか", pt: "Cirurgia", icon: "hospital", note: "切り傷や骨折など、手術や外傷の治療を行う科です。" },
+      { id: 65, cat: "病院・郵便局・空港・看板", word: "救急・夜間入り口", reading: "きゅうきゅう・やかんいりぐち", pt: "Entrada de emergência / plantão noturno", icon: "hospital", note: "夜遅くや休日に急病になった人が入る専用の入り口です。" },
+      { id: 66, cat: "病院・郵便局・空港・看板", word: "診療時間", reading: "しんりょうじかん", pt: "Horário de atendimento médico", icon: "clock", note: "病院が診察を行っている時間帯です。" },
+      { id: 67, cat: "病院・郵便局・空港・看板", word: "休診日", reading: "きゅうしんび", pt: "Dias sem atendimento (Fechado)", icon: "closed", note: "病院の診察がお休みの曜日（土・日・祝祭日など）です。" },
+      { id: 68, cat: "病院・郵便局・空港・看板", word: "祝祭日", reading: "しゅくさいじつ", pt: "Feriados nacionais", icon: "clock", note: "カレンダーで赤色になっている国の祝日・祭日です。" },
+      { id: 69, cat: "病院・郵便局・空港・看板", word: "郵便局", reading: "ゆうびんきょく", pt: "Correios", icon: "post", note: "手紙や荷物を送ったり、貯金・保険の手続きをする場所です。" },
+      { id: 70, cat: "病院・郵便局・空港・看板", word: "速達", reading: "そくたつ", pt: "Entrega expressa (Sedex)", icon: "post", note: "普通郵便より早く届けてもらう郵便サービスです。" },
+      { id: 71, cat: "病院・郵便局・空港・看板", word: "国際小包", reading: "こくさいこづつみ", pt: "Encomenda internacional", icon: "post", note: "海外へ荷物を送るときの郵便サービスです。" },
+      { id: 72, cat: "病院・郵便局・空港・看板", word: "貯金・保険", reading: "ちょきん・ほけん", pt: "Poupança e Seguros", icon: "money", note: "郵便局（ゆうちょ銀行・かんぽ生命）の窓口案内です。" },
+      { id: 73, cat: "病院・郵便局・空港・看板", word: "看板・立て札・表示", reading: "かんばん・たてふだ・ひょうじ", pt: "Placas, avisos e sinalizações", icon: "info", note: "街中や施設にある案内サインの総称です。" },
+      { id: 74, cat: "病院・郵便局・空港・看板", word: "成田空港", reading: "なりたくうこう", pt: "Aeroporto de Narita", icon: "airport", note: "千葉県にある日本の代表的な国際空港です。" },
+      { id: 75, cat: "病院・郵便局・空港・看板", word: "第1・第2ターミナル", reading: "だいいち・だいにたーみなる", pt: "Terminal 1 / Terminal 2", icon: "airport", note: "空港の中で航空会社ごとに分かれている建物です。" },
+      { id: 76, cat: "病院・郵便局・空港・看板", word: "総合案内所", reading: "そうごうあんないじょ", pt: "Central de informações gerais", icon: "info", note: "空港や大きな駅で、全体の案内をまとめて行うカウンターです。" },
+      { id: 77, cat: "病院・郵便局・空港・看板", word: "羽田空港第1・第2ビル駅", reading: "はねだくうこうだいいち・だいにびるえき", pt: "Estação Haneda Airport Terminal 1 & 2", icon: "train", note: "東京の羽田空港に直結している電車の駅名です。" }
+    ];
+
+    // =========================================================================
+    // 2. シチュエーション判定問題データ（全10問・回答後にポルトガル語訳表示）
+    // =========================================================================
+    const SCENE_QUESTIONS = [
+      {
+        location: "場所：駅のホーム",
+        title: "線路にスマホを落としてしまった！",
+        desc: "あなたは今、電車のホームにいます。線路に物を落としてしまいましたが、自分で降りて拾ってはいけません。そこに立てられている看板はどれですか？",
+        descPt: "Você está na plataforma da estação. Deixou algo cair nos trilhos, mas não pode descer para pegar. Qual placa está colocada lá?",
+        icon: "train",
+        correctWord: "線路内立ち入り禁止",
+        options: ["線路内立ち入り禁止", "関係者以外立ち入り禁止", "飛び出し注意", "開放厳禁"],
+        explain: "駅のホームから線路へ降りることは非常に危険なため「線路内立ち入り禁止（せんろないたちいりきんし）」と表示されています。物を落としたときは駅員さんに連絡しましょう。"
+      },
+      {
+        location: "場所：病院の受付",
+        title: "この病院に初めて診察に来ました",
+        desc: "体調が悪くなり、近所の大きな病院へ初めてやってきました。まず最初に向かうべき窓口の表示はどれですか？",
+        descPt: "Você não está se sentindo bem e veio a este hospital pela primeira vez. Para qual guichê você deve ir primeiro?",
+        icon: "hospital",
+        correctWord: "初診受付",
+        options: ["初診受付", "再診受付", "精算所", "総合案内所"],
+        explain: "初めてその病院で診察を受ける場合は「初診受付（しょしんうけつけ）」へ進みます。2回目以降の場合は「再診受付」です。"
+      },
+      {
+        location: "場所：郵便局の窓口",
+        title: "ブラジルの家族に荷物を早く送りたい！",
+        desc: "郵便局で海外へ小包を送る手続きをしています。局員さんが確認しているサービスの言葉はどれですか？",
+        descPt: "Você está nos Correios enviando um pacote para o exterior. Qual palavra indica o serviço de encomenda internacional?",
+        icon: "post",
+        correctWord: "国際小包",
+        options: ["国際小包", "貯金・保険", "切符売り場", "精算所"],
+        explain: "海外へ荷物を送るときは「国際小包（こくさいこづつみ）」、急いで届けてほしいときは「速達（そくたつ）」を利用します。"
+      },
+      {
+        location: "場所：商業施設のトイレ",
+        title: "ポケットティッシュを流してもいい？",
+        desc: "日本のトイレの個室に入ると、壁に大切な注意書きが貼ってあります。トイレの詰まりを防ぐために書かれている表示はどれですか？",
+        descPt: "Ao entrar na cabine do banheiro no Japão, há um aviso importante na parede para evitar entupimentos. Qual é o aviso?",
+        icon: "toilet",
+        correctWord: "備え付けの紙以外流さないで下さい",
+        options: ["備え付けの紙以外流さないで下さい", "開放厳禁", "関係者以外立ち入り禁止", "ゴミを捨てるな"],
+        explain: "日本のトイレでは水に溶けるトイレットペーパー以外は流せません。「備え付けの紙以外流さないで下さい」と書かれています。"
+      },
+      {
+        location: "場所：駅の改札付近",
+        title: "切符の料金が足りなくて改札を出られない！",
+        desc: "乗り過ごしてしまい、持っている切符では改札機のドアが閉まってしまいました。不足分の運賃を支払う場所はどこですか？",
+        descPt: "Você passou da sua estação e o bilhete não tem saldo suficiente para sair na catraca. Onde você paga a diferença?",
+        icon: "ticket",
+        correctWord: "精算所",
+        options: ["精算所", "受付", "案内所", "非常口"],
+        explain: "運賃の不足分を計算して支払う場所は「精算所（せいさんじょ）」です。改札口のすぐ近くにあります。"
+      },
+      {
+        location: "場所：お店の入り口",
+        title: "レストランに行ったらシャッターが閉まっていた",
+        desc: "楽しみにしていたお店に行くと、シャッターに札が掛かっていて今日は1日中お休みのようです。どの札が掛かっていますか？",
+        descPt: "Você foi a um restaurante, mas a porta está fechada e parece ser o dia de folga semanal deles. Qual placa está pendurada?",
+        icon: "closed",
+        correctWord: "定休日",
+        options: ["定休日", "営業中", "準備中", "点検中"],
+        explain: "毎週決められたお店の休日は「定休日（ていきゅうび）」です。開店前や休憩時間の場合は「準備中」と表示されます。"
+      },
+      {
+        location: "場所：路線バスの車内",
+        title: "小銭がなくて運賃が払えない！",
+        desc: "バスを降りるとき、1,000円札しか持っていません。運転席の横にある機械で小銭に換えたいとき、どの表示を探しますか？",
+        descPt: "Na hora de descer do ônibus, você só tem uma nota de 1.000 ienes e precisa de moedas. Qual palavra você procura na máquina?",
+        icon: "money",
+        correctWord: "両替",
+        options: ["両替", "割増", "降車口", "乗車口"],
+        explain: "お札を小銭に換えることは「両替（りょうがえ）」と言います。日本のバスは降りるときに運賃を支払います。"
+      },
+      {
+        location: "場所：建物の廊下・階段付近",
+        title: "地震や火事が起きたときに逃げる出口",
+        desc: "ビルの中で緊急事態が発生しました。緑色の人のマークと一緒に表示されている避難用の出口はどれですか？",
+        descPt: "Ocorreu uma emergência dentro do prédio. Qual é a placa da saída de evacuação indicada com o ícone verde?",
+        icon: "exit",
+        correctWord: "非常口",
+        options: ["非常口", "窓口", "降車口", "改札口"],
+        explain: "緊急時に外へ逃げるための出口は「非常口（ひじょうぐち）」です。"
+      },
+      {
+        location: "場所：エレベーターの前",
+        title: "ボタンを押してもエレベーターが動かない",
+        desc: "4階へ行こうとしましたが、エレベーターのドアに看板が立てられていて修理・安全チェック中のようです。どの表示ですか？",
+        descPt: "Você tentou pegar o elevador, mas há uma placa indicando que ele está passando por manutenção/inspeção. Qual é a placa?",
+        icon: "maintenance",
+        correctWord: "点検中",
+        options: ["点検中", "清掃中", "営業中", "準備中"],
+        explain: "機械や設備の安全確認・修理を行っているときは「点検中（てんけんちゅう）」と表示されます。"
+      },
+      {
+        location: "場所：工事現場・ビルの裏口",
+        title: "階段が壊れていて危ない場所の立て札",
+        desc: "壊れた階段の前に「スタッフ以外は入らないでください」という意味の立て札が置いてあります。どれですか？",
+        descPt: "Em frente a uma escada danificada há uma placa dizendo que apenas pessoas autorizadas podem entrar. Qual é ela?",
+        icon: "no_entry",
+        correctWord: "関係者以外立ち入り禁止",
+        options: ["関係者以外立ち入り禁止", "駐車禁止", "遊泳禁止", "開放厳禁"],
+        explain: "スタッフや工事関係者以外が入ることを禁止する表示は「関係者以外立ち入り禁止（かんけいしゃいがいたちいりきんし）」です。"
+      }
+    ];
+
+    // =========================================================================
+    // 3. アイコンSVG生成ヘルパー
+    // =========================================================================
+    function getSignIconSVG(type) {
+      const icons = {
+        no_smoking: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M6 6l12 12M8 14h8"/></svg>`,
+        smoking_area: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="13" width="14" height="3" rx="1" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M18 10c0-2-2-2-2-4s2-2 2-4"/></svg>`,
+        quiet: `<svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 11v6M9 9h.01M15 9h.01"/></svg>`,
+        danger: `<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`,
+        warning: `<svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>`,
+        no_entry: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M7 12h10"/></svg>`,
+        falling_rocks: `<svg class="w-6 h-6 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20L10 4l4 8 6 8H4z"/></svg>`,
+        dash_out: `<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="14" cy="5" r="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l2-6 4 2 2 4M8 12l4-2 3 3"/></svg>`,
+        no_parking: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M10 16V8h3a2 2 0 010 4h-3M5 5l14 14"/></svg>`,
+        no_litter: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`,
+        no_swimming: `<svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M3 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2M5 5l14 14"/></svg>`,
+        exit: `<svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>`,
+        cafe: `<svg class="w-6 h-6 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg>`,
+        toilet: `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7a2 2 0 100-4 2 2 0 000 4zm8 0a2 2 0 100-4 2 2 0 000 4zM6 21v-7H5a1 1 0 01-1-1V9a1 1 0 011-1h6a1 1 0 011 1v4a1 1 0 01-1 1h-1v7m6 0v-5h-1l2-7h2l2 7h-1v5"/></svg>`,
+        reception: `<svg class="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>`,
+        map: `<svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>`,
+        meeting: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,
+        info: `<svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+        stairs: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20h4v-4h4v-4h4V8h4"/></svg>`,
+        floor: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg>`,
+        elevator: `<svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10l3-3 3 3M9 14l3 3 3-3"/></svg>`,
+        open: `<svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`,
+        closed: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>`,
+        door: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3h8a2 2 0 012 2v16H6V5a2 2 0 012-2zm6 9h.01"/></svg>`,
+        cleaning: `<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>`,
+        maintenance: `<svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>`,
+        train: `<svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11h14M8 21l2-4m6 4l-2-4M9 14h.01M15 14h.01"/></svg>`,
+        ticket: `<svg class="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>`,
+        gate: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+        clock: `<svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5l3 3"/></svg>`,
+        bus: `<svg class="w-6 h-6 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="14" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 11h16M7 18v2m10-2v2M8 14h.01M16 14h.01"/></svg>`,
+        airport: `<svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>`,
+        money: `<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v8m-3-5h6m-6 2h6"/></svg>`,
+        seat: `<svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v10a2 2 0 002 2h7l2 4M7 10h6"/></svg>`,
+        priority_seat: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`,
+        hospital: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke-width="2"/><path stroke-linecap="round" stroke-width="2.5" d="M12 8v8m-4-4h8"/></svg>`,
+        post: `<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2.5" d="M5 6h14M5 11h14M12 11v8"/></svg>`
+      };
+      return icons[type] || icons.info;
+    }
+
+    // =========================================================================
+    // 4. アプリケーション状態＆5人限定共有ロジック
+    // =========================================================================
+    const MAX_MEMBERS = 5;
+    let selectedCategory = "ALL";
+    let showFurigana = true;
+    let fcDeck = [...VOCAB_DATA];
+    let fcIndex = 0;
+    let fcFlipped = false;
+
+    let quizMode = "kanji-to-meaning";
+    let quizCurrentItem = null;
+    let quizStreak = 0;
+    let quizAnswered = false;
+
+    let sceneIndex = 0;
+    let sceneAnswered = false;
+
+    // 学習進捗（ローカル保存＋クラウド同期）
+    const STORAGE_KEY = "kanban_master_progress_v1";
+    let localProgress = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {
+      masteredIds: [],
+      quizCorrect: 0,
+      quizTotal: 0,
+      sceneScore: 0
+    };
+
+    // 5人限定共有ルーム状態
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentRoomCode = (urlParams.get("room") || localStorage.getItem("kanban_room_code") || "KANBAN-WEEK1").toUpperCase();
+    let currentSlotIndex = localStorage.getItem("kanban_slot_index") !== null ? Number(localStorage.getItem("kanban_slot_index")) : null;
+    let roomMembers = [null, null, null, null, null];
+
+    let db = null;
+    let auth = null;
+    let appId = typeof __app_id !== "undefined" ? __app_id : "kanban-week1-app";
+    let unsubscribeRoom = null;
+
+    function showToast(msg, type = "info") {
+      const container = document.getElementById("toast-container");
+      const el = document.createElement("div");
+      const bg =
+        type === "success"
+          ? "bg-emerald-700 text-white"
+          : type === "warn"
+          ? "bg-amber-600 text-white"
+          : "bg-slate-800 text-white";
+      el.className = `${bg} px-4 py-3 rounded-2xl shadow-lg text-xs sm:text-sm font-bold transition-all transform translate-y-2 opacity-0`;
+      el.textContent = msg;
+      container.appendChild(el);
+      requestAnimationFrame(() => {
+        el.classList.remove("translate-y-2", "opacity-0");
+      });
+      setTimeout(() => {
+        el.classList.add("opacity-0", "translate-y-2");
+        setTimeout(() => el.remove(), 300);
+      }, 2800);
+    }
+
+    function speakJapanese(text) {
+      if (!("speechSynthesis" in window)) {
+        showToast("お使いのブラウザは音声読み上げに対応していません", "warn");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "ja-JP";
+      utter.rate = 0.92;
+      window.speechSynthesis.speak(utter);
+    }
+
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(localProgress));
+      syncMySlotToCloud();
+      updateRoomUI();
+    }
+
+    function toggleMastered(id, forceState = null) {
+      const idx = localProgress.masteredIds.indexOf(id);
+      const shouldMaster = forceState !== null ? forceState : idx === -1;
+      if (shouldMaster && idx === -1) {
+        localProgress.masteredIds.push(id);
+      } else if (!shouldMaster && idx !== -1) {
+        localProgress.masteredIds.splice(idx, 1);
+      }
+      saveProgress();
+      renderVocabList();
+    }
+
+    // =========================================================================
+    // 5. Firebase Firestore リアルタイム同期（5人スロット管理・成績非公開）
+    // =========================================================================
+    async function initCloudSync() {
+      document.getElementById("display-passcode").textContent = currentRoomCode;
+      localStorage.setItem("kanban_room_code", currentRoomCode);
+
+      const localRoomCache = JSON.parse(localStorage.getItem(`kanban_room_members_${currentRoomCode}`) || "null");
+      if (Array.isArray(localRoomCache) && localRoomCache.length === MAX_MEMBERS) {
+        roomMembers = localRoomCache;
+      }
+      updateRoomUI();
+
+      try {
+        if (typeof __firebase_config !== "undefined" && __firebase_config) {
+          const firebaseConfig = JSON.parse(__firebase_config);
+          const app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          if (typeof __initial_auth_token !== "undefined" && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+          subscribeToRoom(currentRoomCode);
+        }
+      } catch (err) {
+        console.warn("Offline / local fallback mode:", err);
+      }
+    }
+
+    function subscribeToRoom(roomCode) {
+      if (unsubscribeRoom) {
+        unsubscribeRoom();
+        unsubscribeRoom = null;
+      }
+      if (!db || !auth?.currentUser) return;
+
+      const roomRef = doc(db, "artifacts", appId, "public", "data", "rooms", roomCode);
+      unsubscribeRoom = onSnapshot(
+        roomRef,
+        (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            const slots = [null, null, null, null, null];
+            for (let i = 0; i < MAX_MEMBERS; i++) {
+              if (data[`slot_${i}`]) {
+                slots[i] = data[`slot_${i}`];
+              }
+            }
+            roomMembers = slots;
+            localStorage.setItem(`kanban_room_members_${roomCode}`, JSON.stringify(roomMembers));
+            updateRoomUI();
+          }
+        },
+        (err) => {
+          console.warn("Firestore snapshot error:", err);
+        }
+      );
+    }
+
+    async function syncMySlotToCloud() {
+      if (currentSlotIndex === null || !roomMembers[currentSlotIndex]) return;
+
+      roomMembers[currentSlotIndex] = {
+        name: roomMembers[currentSlotIndex].name,
+        joinedAt: roomMembers[currentSlotIndex].joinedAt || Date.now(),
+        updatedAt: Date.now()
+      };
+      localStorage.setItem(`kanban_room_members_${currentRoomCode}`, JSON.stringify(roomMembers));
+
+      if (!db || !auth?.currentUser) return;
+      try {
+        const roomRef = doc(db, "artifacts", appId, "public", "data", "rooms", currentRoomCode);
+        await setDoc(
+          roomRef,
+          { [`slot_${currentSlotIndex}`]: roomMembers[currentSlotIndex] },
+          { merge: true }
+        );
+      } catch (err) {
+        console.warn("Sync error:", err);
+      }
+    }
+
+    async function joinOrSelectSlot(slotIdx, nicknameInput = "") {
+      const existing = roomMembers[slotIdx];
+      const activeCount = roomMembers.filter(Boolean).length;
+
+      if (!existing) {
+        if (activeCount >= MAX_MEMBERS) {
+          showToast("定員5名に達しているため、これ以上追加できません", "warn");
+          return;
+        }
+        const trimmed = nicknameInput.trim();
+        if (!trimmed) {
+          showToast("ニックネームを入力してください", "warn");
+          return;
+        }
+        roomMembers[slotIdx] = {
+          name: trimmed,
+          joinedAt: Date.now()
+        };
+      }
+
+      currentSlotIndex = slotIdx;
+      localStorage.setItem("kanban_slot_index", String(slotIdx));
+      localStorage.setItem("kanban_room_code", currentRoomCode);
+      localStorage.setItem(`kanban_room_members_${currentRoomCode}`, JSON.stringify(roomMembers));
+
+      if (db && auth?.currentUser) {
+        try {
+          const roomRef = doc(db, "artifacts", appId, "public", "data", "rooms", currentRoomCode);
+          await setDoc(roomRef, { [`slot_${slotIdx}`]: roomMembers[slotIdx] }, { merge: true });
+        } catch (err) {
+          console.warn("Join sync error:", err);
+        }
+      }
+
+      updateRoomUI();
+      closeRoomModal();
+      showToast(`スロット ${slotIdx + 1}（${roomMembers[slotIdx].name}）で参加しました！`, "success");
+    }
+
+    async function clearSlot(slotIdx) {
+      roomMembers[slotIdx] = null;
+      if (currentSlotIndex === slotIdx) {
+        currentSlotIndex = null;
+        localStorage.removeItem("kanban_slot_index");
+      }
+      localStorage.setItem(`kanban_room_members_${currentRoomCode}`, JSON.stringify(roomMembers));
+
+      if (db && auth?.currentUser) {
+        try {
+          const roomRef = doc(db, "artifacts", appId, "public", "data", "rooms", currentRoomCode);
+          await setDoc(roomRef, { [`slot_${slotIdx}`]: null }, { merge: true });
+        } catch (err) {
+          console.warn("Clear slot error:", err);
+        }
+      }
+      updateRoomUI();
+      showToast(`スロット ${slotIdx + 1} を空き枠に戻しました`, "info");
+    }
+
+    // =========================================================================
+    // 6. UI描画：一覧＆検索モード
+    // =========================================================================
+    function initCategoryPills() {
+      const container = document.getElementById("category-pills");
+      const cats = ["ALL", ...new Set(VOCAB_DATA.map((v) => v.cat))];
+      container.innerHTML = cats
+        .map((cat) => {
+          const label = cat === "ALL" ? `すべて (${VOCAB_DATA.length})` : cat;
+          const active = selectedCategory === cat;
+          return `
+            <button data-cat="${cat}" class="cat-pill px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition ${
+              active
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }">
+              ${label}
+            </button>
+          `;
+        })
+        .join("");
+
+      container.querySelectorAll(".cat-pill").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedCategory = btn.dataset.cat;
+          initCategoryPills();
+          renderVocabList();
+        });
+      });
+    }
+
+    function renderVocabList() {
+      const query = document.getElementById("search-input").value.trim().toLowerCase();
+      const statusFilter = document.getElementById("filter-status").value;
+      const grid = document.getElementById("vocab-grid");
+
+      const filtered = VOCAB_DATA.filter((item) => {
+        if (selectedCategory !== "ALL" && item.cat !== selectedCategory) return false;
+        const isMastered = localProgress.masteredIds.includes(item.id);
+        if (statusFilter === "mastered" && !isMastered) return false;
+        if (statusFilter === "unmastered" && isMastered) return false;
+
+        if (query) {
+          const haystack = `${item.word} ${item.reading} ${item.pt} ${item.cat}`.toLowerCase();
+          return haystack.includes(query);
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white p-10 rounded-2xl border border-slate-200 text-center text-slate-500">
+            該当する語彙が見つかりませんでした。検索条件を変更してみてください。
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered
+        .map((item) => {
+          const isMastered = localProgress.masteredIds.includes(item.id);
+          return `
+            <div class="bg-white rounded-2xl p-4 border-2 ${
+              isMastered ? "border-emerald-400 bg-emerald-50/20" : "border-slate-200"
+            } shadow-sm flex flex-col justify-between gap-3 transition hover:shadow-md">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 truncate">
+                    ${item.cat}
+                  </span>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button data-speak="${item.reading}" class="speak-btn w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" title="音声を聞く">
+                      🔊
+                    </button>
+                    <button data-master-id="${item.id}" class="master-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition ${
+                      isMastered
+                        ? "bg-emerald-600 text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-800"
+                    }">
+                      ${isMastered ? "✅ 覚えた" : "未習得"}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 mt-0.5">
+                    ${getSignIconSVG(item.icon)}
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm font-bold text-emerald-700 min-h-[1.25rem] ${showFurigana ? "" : "invisible"}">
+                      ${item.reading}
+                    </p>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug break-words">
+                      ${item.word}
+                    </h3>
+                    <p class="text-base font-semibold text-amber-700 mt-1">
+                      ${item.pt}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-sm text-slate-600 bg-slate-50 px-3.5 py-2.5 rounded-xl border border-slate-100 leading-relaxed">
+                ${item.note}
+              </p>
+            </div>
+          `;
+        })
+        .join("");
+
+      grid.querySelectorAll(".speak-btn").forEach((btn) => {
+        btn.addEventListener("click", () => speakJapanese(btn.dataset.speak));
+      });
+      grid.querySelectorAll(".master-btn").forEach((btn) => {
+        btn.addEventListener("click", () => toggleMastered(Number(btn.dataset.masterId)));
+      });
+    }
+
+    // =========================================================================
+    // 7. UI描画：フラッシュカード・4択クイズ・シチュエーション判定
+    // =========================================================================
+    function initFlashcardDeck() {
+      const filter = document.getElementById("fc-category").value;
+      if (filter === "all") {
+        fcDeck = [...VOCAB_DATA];
+      } else if (filter === "unmastered") {
+        const unmastered = VOCAB_DATA.filter((v) => !localProgress.masteredIds.includes(v.id));
+        fcDeck = unmastered.length > 0 ? unmastered : [...VOCAB_DATA];
+      } else {
+        fcDeck = VOCAB_DATA.filter((v) => v.cat === filter);
+      }
+      fcIndex = 0;
+      fcFlipped = false;
+      updateFlashcardUI();
+    }
+
+    function updateFlashcardUI() {
+      if (!fcDeck.length) return;
+      if (fcIndex >= fcDeck.length) fcIndex = 0;
+      const item = fcDeck[fcIndex];
+      const isMastered = localProgress.masteredIds.includes(item.id);
+
+      document.getElementById("fc-progress").textContent = `${fcIndex + 1} / ${fcDeck.length}`;
+      document.getElementById("fc-front-cat").textContent = item.cat;
+      document.getElementById("fc-front-word").textContent = item.word;
+
+      const frontBadge = document.getElementById("fc-front-badge");
+      frontBadge.textContent = isMastered ? "✅ 覚えた！" : "未習得";
+      frontBadge.className = isMastered
+        ? "px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700"
+        : "px-3 py-1 rounded-lg bg-amber-100 text-amber-700";
+
+      document.getElementById("fc-back-cat").textContent = item.cat;
+      document.getElementById("fc-back-icon").innerHTML = getSignIconSVG(item.icon);
+      document.getElementById("fc-back-reading").textContent = item.reading;
+      document.getElementById("fc-back-word").textContent = item.word;
+      document.getElementById("fc-back-pt").textContent = item.pt;
+      document.getElementById("fc-back-note").textContent = item.note;
+
+      const cardInner = document.getElementById("fc-card-inner");
+      if (fcFlipped) {
+        cardInner.classList.add("rotate-y-180");
+      } else {
+        cardInner.classList.remove("rotate-y-180");
+      }
+    }
+
+    function generateQuizQuestion() {
+      quizAnswered = false;
+      document.getElementById("quiz-feedback").classList.add("hidden");
+
+      const pool = [...VOCAB_DATA];
+      const correct = pool[Math.floor(Math.random() * pool.length)];
+      quizCurrentItem = correct;
+
+      const distractors = pool
+        .filter((v) => v.id !== correct.id)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+      const options = [correct, ...distractors].sort(() => Math.random() - 0.5);
+
+      const promptLabel = document.getElementById("quiz-prompt-label");
+      const questionText = document.getElementById("quiz-question-text");
+      const speakBtn = document.getElementById("quiz-speak-btn");
+
+      if (quizMode === "kanji-to-meaning") {
+        promptLabel.textContent = "この看板の正しい読みとポルトガル語訳はどれですか？";
+        questionText.textContent = correct.word;
+        speakBtn.classList.remove("hidden");
+      } else {
+        promptLabel.textContent = "このポルトガル語訳を表す日本の看板はどれですか？";
+        questionText.textContent = correct.pt;
+        speakBtn.classList.add("hidden");
+      }
+
+      const optionsBox = document.getElementById("quiz-options");
+      optionsBox.innerHTML = options
+        .map((opt) => {
+          const label =
+            quizMode === "kanji-to-meaning"
+              ? `<span class="text-sm text-emerald-700 font-bold block">${opt.reading}</span><span class="text-base sm:text-lg font-bold text-slate-900">${opt.pt}</span>`
+              : `<span class="text-lg sm:text-xl font-bold text-slate-900">${opt.word}</span>`;
+          return `
+            <button data-opt-id="${opt.id}" class="quiz-opt-btn w-full text-left p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition">
+              ${label}
+            </button>
+          `;
+        })
+        .join("");
+
+      optionsBox.querySelectorAll(".quiz-opt-btn").forEach((btn) => {
+        btn.addEventListener("click", () => handleQuizAnswer(Number(btn.dataset.optId), btn));
+      });
+    }
+
+    function handleQuizAnswer(selectedId, clickedBtn) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+
+      const isCorrect = selectedId === quizCurrentItem.id;
+      localProgress.quizTotal += 1;
+      if (isCorrect) {
+        localProgress.quizCorrect += 1;
+        quizStreak += 1;
+      } else {
+        quizStreak = 0;
+      }
+
+      document.getElementById("quiz-streak").textContent = String(quizStreak);
+      const acc = Math.round((localProgress.quizCorrect / localProgress.quizTotal) * 100);
+      document.getElementById("quiz-accuracy").textContent = `${acc}%`;
+      saveProgress();
+
+      document.querySelectorAll(".quiz-opt-btn").forEach((btn) => {
+        const oid = Number(btn.dataset.optId);
+        btn.disabled = true;
+        if (oid === quizCurrentItem.id) {
+          btn.classList.remove("border-slate-200", "bg-white");
+          btn.classList.add("border-emerald-500", "bg-emerald-50");
+        } else if (btn === clickedBtn && !isCorrect) {
+          btn.classList.remove("border-slate-200", "bg-white");
+          btn.classList.add("border-rose-500", "bg-rose-50");
+        }
+      });
+
+      const fb = document.getElementById("quiz-feedback");
+      const fbTitle = document.getElementById("quiz-feedback-title");
+      const fbDetail = document.getElementById("quiz-feedback-detail");
+
+      fbTitle.textContent = isCorrect ? "🎉 正解です！ (Correto!)" : "❌ 惜しい！不正解です (Incorreto)";
+      fbTitle.className = isCorrect ? "font-bold text-lg text-emerald-700" : "font-bold text-lg text-rose-700";
+      fbDetail.textContent = `${quizCurrentItem.word}（${quizCurrentItem.reading}）＝ ${quizCurrentItem.pt}｜${quizCurrentItem.note}`;
+      fb.classList.remove("hidden");
+    }
+
+    function renderSceneQuestion() {
+      sceneAnswered = false;
+      document.getElementById("scene-feedback").classList.add("hidden");
+      document.getElementById("scene-score").textContent = String(localProgress.sceneScore || 0);
+
+      const q = SCENE_QUESTIONS[sceneIndex % SCENE_QUESTIONS.length];
+      document.getElementById("scene-icon-box").innerHTML = getSignIconSVG(q.icon);
+      document.getElementById("scene-location-badge").textContent = q.location;
+      document.getElementById("scene-situation-title").textContent = q.title;
+      document.getElementById("scene-situation-desc").textContent = q.desc;
+
+      const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+      const optBox = document.getElementById("scene-options");
+      optBox.innerHTML = shuffled
+        .map(
+          (word) => `
+          <button data-word="${word}" class="scene-opt-btn p-4 sm:p-5 rounded-2xl border-2 border-slate-800 bg-white hover:bg-slate-50 signboard-frame text-center font-bold text-lg sm:text-xl text-slate-900 transition">
+            ${word}
+          </button>
+        `
+        )
+        .join("");
+
+      optBox.querySelectorAll(".scene-opt-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (sceneAnswered) return;
+          sceneAnswered = true;
+          const chosen = btn.dataset.word;
+          const isCorrect = chosen === q.correctWord;
+
+          if (isCorrect) {
+            localProgress.sceneScore = (localProgress.sceneScore || 0) + 10;
+            document.getElementById("scene-score").textContent = String(localProgress.sceneScore);
+            saveProgress();
+          }
+
+          optBox.querySelectorAll(".scene-opt-btn").forEach((b) => {
+            b.disabled = true;
+            if (b.dataset.word === q.correctWord) {
+              b.classList.remove("bg-white", "border-slate-800");
+              b.classList.add("bg-emerald-50", "border-emerald-600", "text-emerald-900");
+            } else if (b === btn && !isCorrect) {
+              b.classList.remove("bg-white", "border-slate-800");
+              b.classList.add("bg-rose-50", "border-rose-600", "text-rose-900");
+            }
+          });
+
+          const fb = document.getElementById("scene-feedback");
+          const fbTitle = document.getElementById("scene-feedback-title");
+          fbTitle.textContent = isCorrect ? "⭕ 大正解！ (+10点)" : `❌ 不正解（正解：${q.correctWord}）`;
+          fbTitle.className = isCorrect ? "font-bold text-lg text-emerald-700" : "font-bold text-lg text-rose-700";
+          document.getElementById("scene-feedback-pt").textContent = q.descPt;
+          document.getElementById("scene-feedback-desc").textContent = q.explain;
+          fb.classList.remove("hidden");
+        });
+      });
+    }
+
+    // =========================================================================
+    // 8. UI描画：5人限定共有ルーム＆プライバシー保護ボード（自分の成績のみ表示）
+    // =========================================================================
+    function updateRoomUI() {
+      const activeCount = roomMembers.filter(Boolean).length;
+      document.getElementById("header-member-count").textContent = `${activeCount}/${MAX_MEMBERS}人`;
+      document.getElementById("room-capacity-badge").textContent = `参加枠: ${activeCount} / ${MAX_MEMBERS}人`;
+
+      const badge = document.getElementById("header-user-badge");
+      if (currentSlotIndex !== null && roomMembers[currentSlotIndex]) {
+        badge.textContent = `枠${currentSlotIndex + 1}: ${roomMembers[currentSlotIndex].name}`;
+      } else {
+        badge.textContent = "枠を選択";
+      }
+
+      // 1. あなた専用の学習成績カード（自分の成績だけをここに表示）
+      const myCard = document.getElementById("my-private-progress-card");
+      const myMasteredCount = Array.isArray(localProgress.masteredIds) ? localProgress.masteredIds.length : 0;
+      const myPct = Math.round((myMasteredCount / VOCAB_DATA.length) * 100);
+      const myQuizAcc =
+        localProgress.quizTotal > 0
+          ? Math.round((localProgress.quizCorrect / localProgress.quizTotal) * 100) + "%"
+          : "-";
+      const myDisplayName =
+        currentSlotIndex !== null && roomMembers[currentSlotIndex]
+          ? `${roomMembers[currentSlotIndex].name}（スロット ${currentSlotIndex + 1}）`
+          : "ゲスト学習者（未登録）";
+
+      myCard.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
+          <div>
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              🔒 あなたにだけ表示されます（非公開）
+            </span>
+            <h3 class="text-lg sm:text-xl font-bold text-white mt-1.5">あなたの学習成績：${myDisplayName}</h3>
+          </div>
+          <span class="text-xs sm:text-sm text-slate-400">※他のメンバーには見えません</span>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between text-sm sm:text-base font-bold">
+            <span class="text-slate-300">習得語彙数: <span class="text-emerald-400 text-lg">${myMasteredCount}</span> / ${VOCAB_DATA.length} 語</span>
+            <span class="text-emerald-300">${myPct}%</span>
+          </div>
+          <div class="w-full h-3.5 bg-slate-700 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: ${myPct}%"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-1 text-center">
+          <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3.5">
+            <p class="text-xs sm:text-sm text-slate-400 font-bold">あなたのクイズ正答率</p>
+            <p class="text-xl font-bold text-sky-400 mt-1">${myQuizAcc}</p>
+          </div>
+          <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3.5">
+            <p class="text-xs sm:text-sm text-slate-400 font-bold">あなたの場面判定スコア</p>
+            <p class="text-xl font-bold text-amber-400 mt-1">${localProgress.sceneScore || 0} 点</p>
+          </div>
+        </div>
+      `;
+
+      // 2. 5人スロット一覧（他のメンバーの成績・習得数は一切表示しない）
+      const grid = document.getElementById("member-slots-grid");
+      grid.innerHTML = roomMembers
+        .map((member, idx) => {
+          const isMe = currentSlotIndex === idx;
+          if (!member) {
+            const isFull = activeCount >= MAX_MEMBERS;
+            return `
+              <div class="bg-white rounded-3xl p-5 border-2 border-dashed border-slate-300 flex flex-col justify-between gap-4">
+                <div class="flex items-center justify-between">
+                  <span class="px-3 py-1 rounded-xl bg-slate-100 text-slate-600 text-xs sm:text-sm font-bold">スロット ${idx + 1}（空き枠）</span>
+                  <span class="text-xs text-slate-400">最大5人まで</span>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-sm font-bold text-slate-700">この枠に参加登録する</p>
+                  <div class="flex gap-2">
+                    <input type="text" id="board-input-name-${idx}" placeholder="ニックネーム入力" maxlength="12" ${isFull ? "disabled" : ""}
+                      class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <button data-join-slot="${idx}" ${isFull ? "disabled" : ""}
+                      class="board-join-btn px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white text-sm font-bold transition">
+                      参加
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="bg-white rounded-3xl p-5 border-2 ${
+              isMe ? "border-emerald-500 shadow-md" : "border-slate-200"
+            } flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 rounded-2xl ${
+                  isMe ? "bg-emerald-600 text-white" : "bg-slate-800 text-white"
+                } flex items-center justify-center font-bold text-base shrink-0">
+                  ${idx + 1}
+                </div>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <h3 class="font-bold text-base sm:text-lg text-slate-900 truncate">${member.name}</h3>
+                    ${isMe ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">あなた</span>` : ""}
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 mt-1">
+                    <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                      ● 参加済み (登録完了)
+                    </span>
+                    <span class="text-xs text-slate-400">🔒 成績非公開</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row items-end sm:items-center gap-1.5 shrink-0">
+                ${
+                  !isMe
+                    ? `<button data-switch-slot="${idx}" class="board-switch-btn px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs sm:text-sm font-bold text-slate-700">選択</button>`
+                    : ""
+                }
+                <button data-clear-slot="${idx}" class="board-clear-btn px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-xs sm:text-sm font-bold text-rose-600" title="枠を空ける">
+                  退出
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      grid.querySelectorAll(".board-join-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.dataset.joinSlot);
+          const input = document.getElementById(`board-input-name-${idx}`);
+          joinOrSelectSlot(idx, input.value);
+        });
+      });
+      grid.querySelectorAll(".board-switch-btn").forEach((btn) => {
+        btn.addEventListener("click", () => joinOrSelectSlot(Number(btn.dataset.switchSlot)));
+      });
+      grid.querySelectorAll(".board-clear-btn").forEach((btn) => {
+        btn.addEventListener("click", () => clearSlot(Number(btn.dataset.clearSlot)));
+      });
+
+      renderModalSlots();
+    }
+
+    function renderModalSlots() {
+      const list = document.getElementById("modal-slots-list");
+      const activeCount = roomMembers.filter(Boolean).length;
+      list.innerHTML = roomMembers
+        .map((member, idx) => {
+          if (!member) {
+            const isFull = activeCount >= MAX_MEMBERS;
+            return `
+              <div class="p-3 rounded-2xl border border-slate-200 bg-slate-50 flex items-center gap-2">
+                <span class="text-xs sm:text-sm font-bold text-slate-500 w-12 shrink-0">枠 ${idx + 1}</span>
+                <input type="text" id="modal-input-${idx}" placeholder="名前を入力して登録" maxlength="12" ${isFull ? "disabled" : ""}
+                  class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white" />
+                <button data-modal-join="${idx}" ${isFull ? "disabled" : ""}
+                  class="modal-join-btn px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold">
+                  登録
+                </button>
+              </div>
+            `;
+          }
+          return `
+            <div class="p-3 rounded-2xl border ${
+              currentSlotIndex === idx ? "border-emerald-500 bg-emerald-50" : "border-slate-200 bg-white"
+            } flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl bg-slate-800 text-white text-sm font-bold flex items-center justify-center">${idx + 1}</span>
+                <div>
+                  <p class="text-sm sm:text-base font-bold text-slate-900">${member.name}</p>
+                  <p class="text-xs text-emerald-700 font-semibold">参加済み (登録完了) ・ 🔒 成績非公開</p>
+                </div>
+              </div>
+              <button data-modal-select="${idx}" class="modal-select-btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold">
+                選択
+              </button>
+            </div>
+          `;
+        })
+        .join("");
+
+      list.querySelectorAll(".modal-join-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.dataset.modalJoin);
+          const val = document.getElementById(`modal-input-${idx}`).value;
+          joinOrSelectSlot(idx, val);
+        });
+      });
+      list.querySelectorAll(".modal-select-btn").forEach((btn) => {
+        btn.addEventListener("click", () => joinOrSelectSlot(Number(btn.dataset.modalSelect)));
+      });
+    }
+
+    function openRoomModal() {
+      renderModalSlots();
+      document.getElementById("room-modal").classList.remove("hidden");
+    }
+    function closeRoomModal() {
+      document.getElementById("room-modal").classList.add("hidden");
+    }
+
+    // =========================================================================
+    // 9. イベントリスナー＆初期化
+    // =========================================================================
+    window.addEventListener("DOMContentLoaded", () => {
+      // ナビゲーションタブ切替
+      document.querySelectorAll(".nav-tab").forEach((tabBtn) => {
+        tabBtn.addEventListener("click", () => {
+          const target = tabBtn.dataset.tab;
+          document.querySelectorAll(".nav-tab").forEach((b) => {
+            b.classList.remove("border-emerald-400", "text-emerald-300");
+            b.classList.add("border-transparent", "text-slate-300");
+          });
+          tabBtn.classList.remove("border-transparent", "text-slate-300");
+          tabBtn.classList.add("border-emerald-400", "text-emerald-300");
+
+          document.querySelectorAll(".tab-view").forEach((v) => v.classList.add("hidden"));
+          document.getElementById(`view-${target}`).classList.remove("hidden");
+
+          if (target === "flashcard") updateFlashcardUI();
+          if (target === "quiz" && !quizCurrentItem) generateQuizQuestion();
+          if (target === "scene") renderSceneQuestion();
+          if (target === "members") updateRoomUI();
+        });
+      });
+
+      // 一覧＆検索コントロール
+      document.getElementById("search-input").addEventListener("input", renderVocabList);
+      document.getElementById("filter-status").addEventListener("change", renderVocabList);
+      document.getElementById("toggle-furigana").addEventListener("click", (e) => {
+        showFurigana = !showFurigana;
+        e.currentTarget.querySelector("span").textContent = `ふりがな：${showFurigana ? "ON" : "OFF"}`;
+        renderVocabList();
+      });
+
+      // フラッシュカードカテゴリー選択肢の追加
+      const fcCatSelect = document.getElementById("fc-category");
+      [...new Set(VOCAB_DATA.map((v) => v.cat))].forEach((cat) => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        fcCatSelect.appendChild(opt);
+      });
+      fcCatSelect.addEventListener("change", initFlashcardDeck);
+
+      document.getElementById("fc-card-wrapper").addEventListener("click", (e) => {
+        if (e.target.closest("button")) return;
+        fcFlipped = !fcFlipped;
+        updateFlashcardUI();
+      });
+      document.getElementById("fc-speak-front").addEventListener("click", () => {
+        speakJapanese(fcDeck[fcIndex].reading);
+      });
+      document.getElementById("fc-speak-back").addEventListener("click", () => {
+        speakJapanese(fcDeck[fcIndex].reading);
+      });
+      document.getElementById("fc-prev").addEventListener("click", () => {
+        fcIndex = (fcIndex - 1 + fcDeck.length) % fcDeck.length;
+        fcFlipped = false;
+        updateFlashcardUI();
+      });
+      document.getElementById("fc-next").addEventListener("click", () => {
+        fcIndex = (fcIndex + 1) % fcDeck.length;
+        fcFlipped = false;
+        updateFlashcardUI();
+      });
+      document.getElementById("fc-mark-mastered").addEventListener("click", () => {
+        const item = fcDeck[fcIndex];
+        toggleMastered(item.id, true);
+        showToast(`「${item.word}」を習得済みにしました！`, "success");
+        fcIndex = (fcIndex + 1) % fcDeck.length;
+        fcFlipped = false;
+        updateFlashcardUI();
+      });
+      document.getElementById("fc-mark-unsure").addEventListener("click", () => {
+        const item = fcDeck[fcIndex];
+        toggleMastered(item.id, false);
+        showToast(`「${item.word}」を復習リストに残しました`, "info");
+        fcIndex = (fcIndex + 1) % fcDeck.length;
+        fcFlipped = false;
+        updateFlashcardUI();
+      });
+
+      // 4択クイズイベント
+      document.querySelectorAll(".qmode-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          quizMode = btn.dataset.qmode;
+          document.querySelectorAll(".qmode-btn").forEach((b) => {
+            b.className = "qmode-btn flex-1 py-2.5 px-3 rounded-xl text-sm sm:text-base font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+          });
+          btn.className = "qmode-btn flex-1 py-2.5 px-3 rounded-xl text-sm sm:text-base font-bold bg-slate-900 text-white transition";
+          generateQuizQuestion();
+        });
+      });
+
+      document.getElementById("quiz-speak-btn").addEventListener("click", () => {
+        if (quizCurrentItem) speakJapanese(quizCurrentItem.reading);
+      });
+      document.getElementById("quiz-next-btn").addEventListener("click", generateQuizQuestion);
+
+      // シチュエーション判定イベント
+      document.getElementById("scene-next-btn").addEventListener("click", () => {
+        sceneIndex += 1;
+        renderSceneQuestion();
+      });
+
+      // ルームモーダル・共有イベント
+      document.getElementById("btn-open-room-modal").addEventListener("click", openRoomModal);
+      document.getElementById("btn-close-room-modal").addEventListener("click", closeRoomModal);
+      document.getElementById("room-modal").addEventListener("click", (e) => {
+        if (e.target.id === "room-modal") closeRoomModal();
+      });
+
+      // 全画面表示（フルスクリーン）切替ボタン（OS制限時も集中フルスクリーンモードへ移行）
+      const toggleFocusFullscreen = async (forceExit = false) => {
+        const isFocus = document.body.classList.contains("focus-fullscreen");
+        if (forceExit || isFocus) {
+          document.body.classList.remove("focus-fullscreen");
+          document.getElementById("btn-exit-focus-fullscreen").classList.add("hidden");
+          if (document.fullscreenElement && document.exitFullscreen) {
+            try { await document.exitFullscreen(); } catch (e) {}
+          }
+          return;
+        }
+
+        document.body.classList.add("focus-fullscreen");
+        document.getElementById("btn-exit-focus-fullscreen").classList.remove("hidden");
+
+        try {
+          const el = document.documentElement;
+          if (el.requestFullscreen) {
+            await el.requestFullscreen();
+          } else if (el.webkitRequestFullscreen) {
+            await el.webkitRequestFullscreen();
+          }
+        } catch (e) {
+          // iPhone SafariやiFrame環境ではアプリ内集中フルスクリーンが有効になります
+        }
+        showToast("全画面集中モードに切り替えました（右上のボタンで戻れます）", "success");
+      };
+
+      document.getElementById("btn-fullscreen").addEventListener("click", () => toggleFocusFullscreen(false));
+      document.getElementById("btn-exit-focus-fullscreen").addEventListener("click", () => toggleFocusFullscreen(true));
+
+      document.getElementById("btn-switch-room").addEventListener("click", () => {
+        const code = document.getElementById("input-passcode").value.trim().toUpperCase();
+        if (!code) {
+          showToast("新しい合言葉を入力してください", "warn");
+          return;
+        }
+        currentRoomCode = code;
+        currentSlotIndex = null;
+        roomMembers = [null, null, null, null, null];
+        document.getElementById("display-passcode").textContent = currentRoomCode;
+        document.getElementById("input-passcode").value = "";
+        subscribeToRoom(currentRoomCode);
+        updateRoomUI();
+        showToast(`ルーム「${currentRoomCode}」に切り替えました`, "success");
+      });
+
+      document.getElementById("btn-copy-invite").addEventListener("click", () => {
+        const shareUrl = `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(currentRoomCode)}`;
+        const textToCopy = `【日本の看板・表示マスター（5人限定学習ルーム）】\n合言葉: ${currentRoomCode}\n共有URL: ${shareUrl}`;
+        const textarea = document.createElement("textarea");
+        textarea.value = textToCopy;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showToast("招待用の合言葉とURLをクリップボードにコピーしました！", "success");
+      });
+
+      // 初期描画実行
+      initCategoryPills();
+      renderVocabList();
+      initFlashcardDeck();
+      generateQuizQuestion();
+      renderSceneQuestion();
+      initCloudSync();
+    });
+  </script>
+</body>
+</html>
